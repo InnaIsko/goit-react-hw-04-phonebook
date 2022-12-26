@@ -1,22 +1,19 @@
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { LabelFilter, InputFilter } from './Filter.styled';
 
-export class Filter extends Component {
-  render() {
-    return (
-      <LabelFilter>
-        Find contacts by name
-        <InputFilter
-          type="text"
-          name="filter"
-          value={this.props.onFilterValue}
-          onChange={this.props.onGetInputValue}
-        />
-      </LabelFilter>
-    );
-  }
+export function Filter({ onFilterValue, onGetInputValue }) {
+  return (
+    <LabelFilter>
+      Find contacts by name
+      <InputFilter
+        type="text"
+        name="filter"
+        value={onFilterValue}
+        onChange={onGetInputValue}
+      />
+    </LabelFilter>
+  );
 }
 
 Filter.propTypes = {

@@ -8,7 +8,6 @@ export function ContactListItem({ onContactInfo, onButtonDelite }) {
         {onContactInfo.name}: {onContactInfo.number}
       </Contact>
       <BtnDelite onClick={() => onButtonDelite(onContactInfo.id)}>
-        {' '}
         Delete
       </BtnDelite>
     </ContactItem>

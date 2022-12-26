@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import { Box } from 'components/Box';
 
@@ -6,61 +6,56 @@ import { ContactForm } from './Form/Form';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 
-export class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
+export function App() {
+  const [contacts, setContacts] = useState(
+    JSON.parse(window.localStorage.getItem('contacts')) || []
+  );
+  const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const getInputValueFilter = event => {
+    setFilter(event.currentTarget.value);
   };
 
-  getInputValueFilter = event => {
-    this.setState({ filter: event.currentTarget.value });
+  const deliteContacts = contactID => {
+    const del = contacts.filter(contact => contact.id !== contactID);
+    setContacts(del);
   };
 
-  deliteConacts = contactID => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactID),
-    }));
-  };
+  const handleSabmitForm = (name, number) => {
+    const nameFilter = contacts.some(elem => elem.name === name);
 
-  handleSabmitForm = ({ name, number }) => {
-    this.setState(prevState => {
-      const nameFilter = prevState.contacts.some(elem => elem.name === name);
-      if (nameFilter) {
-        alert(`${name} is olredi in contacts`);
-      } else {
-        return {
-          contacts: [
-            ...prevState.contacts,
-            {
-              name,
-              number,
-              id: nanoid(),
-            },
-          ],
+    if (nameFilter) {
+      alert(`${name} is olredi in contacts`);
+    } else {
+      setContacts(state => {
+        const newContacts = {
+          name,
+          number,
+          id: nanoid(),
         };
-      }
-    });
+        return [...state, newContacts];
+      });
+    }
   };
 
-  render() {
-    const filterContacts = this.state.contacts.filter(value =>
-      value.name.toLowerCase().includes(this.state.filter.toLowerCase())
-    );
+  const filterContacts = contacts.filter(value =>
+    value.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
-    return (
-      <Box bg="body" pl="40px" pr="40px">
-        <h1>Phonebook</h1>
-        <ContactForm onSubmitForm={this.handleSabmitForm} />
-        <h2>Contacts</h2>
-        <ContactList
-          onFilterContacts={filterContacts}
-          onContactsDelite={this.deliteConacts}
-        />
-        <Filter
-          onFilterValue={this.state.filter}
-          onGetInputValue={this.getInputValueFilter}
-        />
-      </Box>
-    );
-  }
+  return (
+    <Box bg="body" pl="40px" pr="40px">
+      <h1>Phonebook</h1>
+      <ContactForm onSubmitForm={handleSabmitForm} />
+      <h2>Contacts</h2>
+      <ContactList
+        onFilterContacts={filterContacts}
+        onContactsDelite={deliteContacts}
+      />
+      <Filter onFilterValue={filter} onGetInputValue={getInputValueFilter} />
+    </Box>
+  );
 }
